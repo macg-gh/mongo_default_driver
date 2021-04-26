@@ -29,7 +29,8 @@ const findDocuments = function ( db , callback ) {
       assert.equal(err , null);
       console.log("Found the following records.");
       console.log(product_records);
-      callback(product_records);
+      callback(); // she had a parameter hear, but if the callback is just
+      //client.close() then I don't see why that needs a param.
   });
 }
 
