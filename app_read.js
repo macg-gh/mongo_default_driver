@@ -14,7 +14,9 @@ client.connect(  function(err) {
   const db = client.db(dbName);
   const products = db.collection('products');
 
-  findDocuments(db , function () {
+  findDocuments(db , function (prs) {
+    console.log("Found the following records.");
+    console.log(prs);
     client.close();
   });
 
@@ -27,10 +29,7 @@ const findDocuments = function ( db , callback ) {
 
   collection.find({}).toArray(function (err , product_records) {
       assert.equal(err , null);
-      console.log("Found the following records.");
-      console.log(product_records);
-      callback(); // she had a parameter hear, but if the callback is just
-      //client.close() then I don't see why that needs a param.
+      callback(product_records);
   });
 }
 
