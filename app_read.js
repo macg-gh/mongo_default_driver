@@ -12,7 +12,6 @@ client.connect(  function(err) {
   console.log("Connected successfully to the server.");
 
   const db = client.db(dbName);
-  const products = db.collection('products');
 
   findDocuments(db , function (prs) {
     console.log("Found the following records.");
