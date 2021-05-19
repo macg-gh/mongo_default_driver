@@ -7,22 +7,24 @@ const dbName = 'fruitsDB';
 
 const client = new MongoClient(url , { useUnifiedTopology: true });
 
-client.connect(  function(err) {
-  assert.equal(null,err);
-  console.log("Connected successfully to the server.");
+const logResult=function(result){
+  console.log("Inserted documents, the results are:");
+  console.log(result);
+};
 
-  const db = client.db(dbName);
+const assertOnResult=function(err, result){
+  assert.equal(err , null);
+  assert.equal(3 , result.result.n);
+  assert.equal(3 , result.ops.length);
+};
 
-  insertDocuments(db , function (r) {
-    console.log("Inserted documents, the results are:");
-    console.log(r);
-    client.close();
-  });
+const insertManyCB=function(err, result){
+  assertOnResult(err, result);
+  logResult(result);
+  client.close();
+};
 
-});
-
-
-const insertDocuments = function ( db , callback ) {
+const insertDocuments = function ( db   ) {
 
   const collection = db.collection('fruits');
 
@@ -42,14 +44,21 @@ const insertDocuments = function ( db , callback ) {
       score: 9,
       review: "Great stuff!"
     }
-  ] , function(err, result){
-    assert.equal(err , null);
-    assert.equal(3 , result.result.n);
-    assert.equal(3 , result.ops.length);
-    callback(result);
-  });
+  ] , insertManyCB );
+
+};
+
+const workOnConnect=function(err) {
+  assert.equal(null,err);
+  console.log("Connected successfully to the server.");
+
+  const db = client.db(dbName);
+
+  insertDocuments(db );
 
 }
+
+client.connect(workOnConnect);
 
 // the useUnifiedTopology option in the client constructor will make this
 // warning go away \/

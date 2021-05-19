@@ -3,34 +3,39 @@ const assert = require('assert');
 
 const url = 'mongodb://127.0.0.1:27017';
 
-const dbName = 'shopDB';
+const dbName = 'fruitsDB';
 
 const client = new MongoClient(url , { useUnifiedTopology: true });
 
-client.connect(  function(err) {
+
+const collectionFindCB = function (err , prs) {
+  assert.equal(err , null);
+  console.log("Found the following records.");
+  console.log(prs);
+  client.close();
+};
+
+const findDocuments = function ( db ) {
+
+  const collection = db.collection('fruits');
+
+  collection.find({}).toArray( collectionFindCB );
+};
+
+
+const connectCB = function (err) {
   assert.equal(null,err);
   console.log("Connected successfully to the server.");
 
   const db = client.db(dbName);
 
-  findDocuments(db , function (prs) {
-    console.log("Found the following records.");
-    console.log(prs);
-    client.close();
-  });
+  findDocuments(db );
 
-});
+};
+
+client.connect( connectCB );
 
 
-const findDocuments = function ( db , callback ) {
-
-  const collection = db.collection('products');
-
-  collection.find({}).toArray(function (err , product_records) {
-      assert.equal(err , null);
-      callback(product_records);
-  });
-}
 
 // the useUnifiedTopology option in the client constructor will make this
 // warning go away \/
